@@ -33,14 +33,41 @@ const createProduct = asyncHandler(async (req, res) => {
 //@route GET /:id
 //@access public
 const getProduct = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Get a product" });
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+  res.status(200).json(product);
 });
 
 //@desc Update product
 //@route PUT /:id
 //@access public
 const updateProduct = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Update a product" });
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  const { name, inStock, price } = req.body;
+  if (name != null) {
+    product.name = name;
+  }
+  if (inStock != null) {
+    product.inStock = inStock;
+  }
+  if (price != null) {
+    product.price = price;
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    req.params.id,
+    product
+  );
+
+  res.status(200).json(updatedProduct);
 });
 
 //@desc Delete product
@@ -86,6 +113,14 @@ const getProductsByPriceRange = asyncHandler(async (req, res) => {
   }
 });
 
+//@desc Delete all products
+//@route DELETE /
+//@access public
+const deleteAllProducts = asyncHandler(async (req, res) => {
+  await Product.deleteMany({});
+  res.status(200).json({ success: true });
+});
+
 module.exports = {
   getProducts,
   createProduct,
@@ -94,4 +129,5 @@ module.exports = {
   deleteProduct,
   getProductsInStock,
   getProductsByPriceRange,
+  deleteAllProducts,
 };

@@ -10,6 +10,7 @@ const {
   deleteProduct,
   getProductsInStock,
   getProductsByPriceRange,
+  deleteAllProducts,
 } = require("./controllers/productController");
 
 connectDb();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.get("/", getProducts).post("/", createProduct);
 app.get("/in-stock", getProductsInStock);
 app.get("/price-range/:min/:max", getProductsByPriceRange);
+app.delete("/all", deleteAllProducts);
 app
   .get("/:id", getProduct)
   .put("/:id", updateProduct)
